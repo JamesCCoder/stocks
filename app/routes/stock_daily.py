@@ -3,13 +3,14 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException
 from app.models.stock import DownloadRequest
 from app.utils.alpha_vantage import get_daily_data
-from stocks import allStocks
+from stocks_test import allStocks
 from app.utils.globals import (
     total_stocks,
     completed_count,
     success_count,
     failure_count,
     no_update_needed_count,
+    stocks_data,
 )
 
 router = APIRouter()
@@ -29,8 +30,20 @@ async def download_all_stocks(request: DownloadRequest):
     failure_count = 0
     no_update_needed_count = 0
 
+    today = pd.Timestamp.now()
+    # 调整yesterday变量，考虑周六和周日的情况
+    if today.dayofweek == 5:  # 如果今天是周六
+        yesterday = today - pd.Timedelta(days=1)
+    elif today.dayofweek == 6:  # 如果今天是周日
+        yesterday = today - pd.Timedelta(days=2)
+    else:
+        yesterday = today - pd.Timedelta(days=1)
+
+    yesterday = yesterday.normalize()
+    
+
     for symbol in allStocks:
-        file_name = os.path.join(folder_name, f'{symbol}_data.csv')
+        file_name = os.path.join(folder_name, f'{symbol}_daily_data.csv')
         need_update = False
         start_date = None
 
@@ -41,7 +54,6 @@ async def download_all_stocks(request: DownloadRequest):
                 need_update = True
             else:
                 last_date = existing_data.index.max()
-                yesterday = (pd.Timestamp.now() - pd.Timedelta(days=1)).normalize()
                 if last_date >= yesterday:
                     no_update_needed_count += 1
                     completed_count += 1
