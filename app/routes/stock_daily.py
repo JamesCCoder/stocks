@@ -3,7 +3,7 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException
 from app.models.stock import DownloadRequest
 from app.utils.alpha_vantage import get_daily_data
-from stocks_test import allStocks
+from stocks import allStocks
 from app.utils.globals import (
     total_stocks,
     completed_count,
