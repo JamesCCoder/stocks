@@ -1,6 +1,9 @@
+import sys
+sys.dont_write_bytecode = True
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import stock
+from app.routes import router
 
 app = FastAPI()
 
@@ -13,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(stock.router, prefix="/api")
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn

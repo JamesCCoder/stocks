@@ -3,26 +3,27 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException
 from app.models.stock import DownloadRequest
 from app.utils.alpha_vantage import get_daily_data
-from stocks import allStocks
+from stocks_test import allStocks
+from app.utils.globals import (
+    total_stocks,
+    completed_count,
+    success_count,
+    failure_count,
+    no_update_needed_count,
+)
 
 router = APIRouter()
-
-# 初始化全局变量
-total_stocks = len(allStocks)
-completed_count = 0
-success_count = 0
-failure_count = 0
-no_update_needed_count = 0
 
 @router.post("/download_all_stocks")
 async def download_all_stocks(request: DownloadRequest):
     global total_stocks, completed_count, success_count, failure_count, no_update_needed_count
-
+    
     folder_name = request.folder_name
 
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
+    total_stocks = len(allStocks)
     completed_count = 0
     success_count = 0
     failure_count = 0
@@ -85,17 +86,6 @@ async def download_all_stocks(request: DownloadRequest):
             completed_count += 1
             print(f"No update needed for {symbol}")
             print(f"{completed_count}/{total_stocks} completed")
-
-    return {
-        "total_completed": completed_count,
-        "successful_downloads": success_count,
-        "failed_downloads": failure_count,
-        "no_update_needed": no_update_needed_count
-    }
-
-@router.get("/summary")
-async def summary():
-    global total_stocks, completed_count, success_count, failure_count, no_update_needed_count
 
     return {
         "total_completed": completed_count,

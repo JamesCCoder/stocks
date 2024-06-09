@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 from alpha_vantage.timeseries import TimeSeries
 from app.config import settings
