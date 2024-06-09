@@ -1,8 +1,7 @@
-notes.txt
-
 config.py
 
 stocks.py
 
-
-american_stocks_day
+__pycache__
+__init__.py
+day

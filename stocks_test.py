@@ -1,1 +1,7 @@
-stock = ['AAPL']
+allStocks = [
+    "A",
+"AA",
+"AACG",
+"AACI",
+"fdsfs"
+]
