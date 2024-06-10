@@ -1,8 +1,10 @@
 import os
 import pandas as pd
+from functools import lru_cache
 from fastapi import APIRouter, HTTPException, Query
 from app.models.stock import DownloadRequest
 from app.utils.alpha_vantage import get_daily_data
+from app.utils.alpha_vantage import get_daily_data_for_symbol
 from stocks_test import allStocks
 from stocks import allStocks1
 from app.utils.globals import (
@@ -132,3 +134,12 @@ async def get_latest_stock_data(folder_name: str = Query(..., description="The f
                     "volume": data.loc[latest_day, "5. volume"]
                 })
     return latest_data
+
+
+@router.get("/stock_daily_data")
+async def get_stock_daily_data(symbol: str, folder_name: str):
+    try:
+        data = get_daily_data_for_symbol(symbol, folder_name)
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
