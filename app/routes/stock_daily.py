@@ -1,9 +1,10 @@
 import os
 import pandas as pd
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from app.models.stock import DownloadRequest
 from app.utils.alpha_vantage import get_daily_data
 from stocks_test import allStocks
+from stocks import allStocks1
 from app.utils.globals import (
     total_stocks,
     completed_count,
@@ -105,3 +106,29 @@ async def download_all_stocks(request: DownloadRequest):
         "failed_downloads": failure_count,
         "no_update_needed": no_update_needed_count
     }
+
+
+@router.get("/latest_stock_data")
+async def get_latest_stock_data(folder_name: str = Query(..., description="The folder name where CSV files are stored")):
+    folder_path = os.path.join(os.getcwd(), folder_name)
+    
+    if not os.path.exists(folder_path):
+        raise HTTPException(status_code=404, detail="Folder not found")
+
+    latest_data = []
+    for symbol in allStocks1:
+        file_name = os.path.join(folder_path, f'{symbol}_daily_data.csv')
+        if os.path.exists(file_name):
+            data = pd.read_csv(file_name, index_col=0, parse_dates=True)
+            if not data.empty:
+                latest_day = data.index.max()
+                latest_data.append({
+                    "symbol": symbol,
+                    "date": latest_day.strftime('%Y-%m-%d'),
+                    "open": data.loc[latest_day, "1. open"],
+                    "high": data.loc[latest_day, "2. high"],
+                    "low": data.loc[latest_day, "3. low"],
+                    "close": data.loc[latest_day, "4. close"],
+                    "volume": data.loc[latest_day, "5. volume"]
+                })
+    return latest_data
