@@ -1,6 +1,7 @@
 # Project File Structure
 ```
 .
+├── README.md
 ├── app
 │   ├── main.py
 │   ├── models
@@ -11,5 +12,5 @@
 ├── stocks_test.py
 └── structure.txt
 
-4 directories, 5 files
+4 directories, 6 files
 ```
