@@ -3,6 +3,7 @@
 .
 ├── 1
 │   ├── AACG_daily_data.csv
+│   ├── AACI_daily_data.csv
 │   ├── AA_daily_data.csv
 │   └── A_daily_data.csv
 ├── 22
@@ -21,5 +22,5 @@
 ├── stocks_test.py
 └── structure.txt
 
-6 directories, 13 files
+6 directories, 14 files
 ```
